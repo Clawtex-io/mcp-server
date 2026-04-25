@@ -1,0 +1,38 @@
+{
+  "name": "@clawtex/mcp-server",
+  "version": "0.1.0",
+  "description": "Clawtex MCP server - structured memory for AI agents",
+  "type": "module",
+  "bin": {
+    "clawtex-mcp": "./dist/server.js"
+  },
+  "main": "./dist/server.js",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "dev": "tsc && node dist/server.js"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.1"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.0",
+    "@types/node": "^22.0.0"
+  },
+  "license": "BSL-1.1",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Clawtex-io/mcp-server"
+  },
+  "homepage": "https://clawtex.io",
+  "keywords": [
+    "mcp",
+    "claude",
+    "ai-agents",
+    "memory",
+    "model-context-protocol"
+  ]
+}
