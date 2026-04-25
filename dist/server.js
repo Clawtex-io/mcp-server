@@ -5,7 +5,20 @@ import { CallToolRequestSchema, ListToolsRequestSchema, ListResourcesRequestSche
 import { ClawtexClient } from "./client.js";
 const apiKey = process.env.CLAWTEX_API_KEY;
 if (!apiKey) {
-    console.error("CLAWTEX_API_KEY environment variable is required");
+    console.error("\nCLAWTEX_API_KEY is required.\n");
+    console.error("1. Sign up at https://clawtex.io/signup");
+    console.error("2. Create an agent and copy your API key");
+    console.error("3. Add to your Claude config:\n");
+    console.error(`   {
+     "mcpServers": {
+       "clawtex": {
+         "command": "npx",
+         "args": ["-y", "@clawtex/mcp-server"],
+         "env": { "CLAWTEX_API_KEY": "tkr_your_key_here" }
+       }
+     }
+   }\n`);
+    console.error("Docs: https://clawtex.io/docs\n");
     process.exit(1);
 }
 const client = new ClawtexClient(apiKey);

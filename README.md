@@ -4,16 +4,19 @@ Structured memory for AI agents. Gives your agent persistent state, event histor
 
 ## Setup
 
-1. Create an account at [clawtex.io](https://clawtex.io) and get your API key
-2. Add to your Claude config:
+### 1. Get an API key
 
-**Claude Code** (`~/.claude/settings.json`):
+Sign up at [clawtex.io](https://clawtex.io/signup) and create an agent. Your API key starts with `tkr_`.
+
+### 2. Add to your Claude config
+
+**Claude Code** — edit `~/.claude/settings.json`:
 ```json
 {
   "mcpServers": {
     "clawtex": {
       "command": "npx",
-      "args": ["@clawtex/mcp-server"],
+      "args": ["-y", "@clawtex/mcp-server"],
       "env": {
         "CLAWTEX_API_KEY": "tkr_your_key_here"
       }
@@ -22,22 +25,21 @@ Structured memory for AI agents. Gives your agent persistent state, event histor
 }
 ```
 
-**Claude Desktop** (`claude_desktop_config.json`):
-```json
-{
-  "mcpServers": {
-    "clawtex": {
-      "command": "npx",
-      "args": ["@clawtex/mcp-server"],
-      "env": {
-        "CLAWTEX_API_KEY": "tkr_your_key_here"
-      }
-    }
-  }
-}
-```
+**Claude Desktop** — edit the config file at:
+- macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
+- Windows: `%APPDATA%\Claude\claude_desktop_config.json`
 
-3. Restart Claude. State and lessons auto-load at session start.
+Add the same `clawtex` block inside `mcpServers`.
+
+### 3. Restart Claude
+
+Start a new session. Clawtex loads your state and lessons automatically.
+
+### 4. Verify it works
+
+Ask Claude: "What Clawtex tools do you have?"
+
+It should list 15 tools including `clawtex_bootstrap`, `clawtex_log_event`, and `clawtex_update_state`. Your dashboard at [clawtex.io](https://clawtex.io) will show the agent as "Active".
 
 ## Tools
 

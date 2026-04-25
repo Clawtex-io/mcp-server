@@ -1,6 +1,6 @@
 {
   "name": "@clawtex/mcp-server",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Clawtex MCP server - structured memory for AI agents",
   "type": "module",
   "bin": {
