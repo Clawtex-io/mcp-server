@@ -116,6 +116,38 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
       annotations: { readOnlyHint: true },
     },
     {
+      name: "clawtex_delete_state",
+      description:
+        "Delete a state entity from Clawtex. Use this to remove outdated or incorrect entities.",
+      inputSchema: {
+        type: "object" as const,
+        properties: {
+          id: {
+            type: "string",
+            description: "Entity ID to delete (e.g. 'acme-corp')",
+          },
+        },
+        required: ["id"],
+      },
+      annotations: { destructiveHint: true },
+    },
+    {
+      name: "clawtex_delete_event",
+      description:
+        "Delete an event from Clawtex by its ID. Use this to remove incorrect or duplicate event entries.",
+      inputSchema: {
+        type: "object" as const,
+        properties: {
+          event_id: {
+            type: "string",
+            description: "The event ID to delete (e.g. 'EVT-20260505-123456-abc')",
+          },
+        },
+        required: ["event_id"],
+      },
+      annotations: { destructiveHint: true },
+    },
+    {
       name: "clawtex_update_state",
       description:
         "Create or update a state entity in Clawtex. Use this when a project status changes, a new client appears, or any tracked entity needs updating.",
@@ -393,6 +425,22 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       case "clawtex_get_state": {
         const typedArgs = args as { type?: string };
         const result = await client.getState(typedArgs.type);
+        return {
+          content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
+        };
+      }
+
+      case "clawtex_delete_state": {
+        const typedArgs = args as { id: string };
+        const result = await client.deleteState(typedArgs.id);
+        return {
+          content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
+        };
+      }
+
+      case "clawtex_delete_event": {
+        const typedArgs = args as { event_id: string };
+        const result = await client.deleteEvent(typedArgs.event_id);
         return {
           content: [{ type: "text", text: JSON.stringify(result, null, 2) }],
         };
