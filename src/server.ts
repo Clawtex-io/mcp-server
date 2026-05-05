@@ -97,6 +97,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
         type: "object" as const,
         properties: {},
       },
+      annotations: { readOnlyHint: true },
     },
     {
       name: "clawtex_get_state",
@@ -112,6 +113,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
           },
         },
       },
+      annotations: { readOnlyHint: true },
     },
     {
       name: "clawtex_update_state",
@@ -138,6 +140,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
         },
         required: ["id", "type", "data"],
       },
+      annotations: { destructiveHint: true },
     },
     {
       name: "clawtex_log_event",
@@ -176,6 +179,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
         },
         required: ["type", "summary"],
       },
+      annotations: { destructiveHint: true },
     },
     {
       name: "clawtex_get_events",
@@ -202,6 +206,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
           },
         },
       },
+      annotations: { readOnlyHint: true },
     },
     {
       name: "clawtex_get_lessons",
@@ -211,6 +216,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
         type: "object" as const,
         properties: {},
       },
+      annotations: { readOnlyHint: true },
     },
     {
       name: "clawtex_extract_lessons",
@@ -220,6 +226,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
         type: "object" as const,
         properties: {},
       },
+      annotations: { destructiveHint: true },
     },
     {
       name: "clawtex_approve_lesson",
@@ -234,6 +241,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
         },
         required: ["lesson_id"],
       },
+      annotations: { destructiveHint: true },
     },
     {
       name: "clawtex_reject_lesson",
@@ -248,6 +256,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
         },
         required: ["lesson_id"],
       },
+      annotations: { destructiveHint: true },
     },
     {
       name: "clawtex_create_lesson",
@@ -271,6 +280,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
         },
         required: ["context", "mistake", "correct"],
       },
+      annotations: { destructiveHint: true },
     },
     {
       name: "clawtex_signal_lesson",
@@ -294,6 +304,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
         },
         required: ["lesson_id", "relevant", "followed"],
       },
+      annotations: { destructiveHint: true },
     },
     {
       name: "clawtex_start_session",
@@ -308,6 +319,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
           },
         },
       },
+      annotations: { destructiveHint: true },
     },
     {
       name: "clawtex_end_session",
@@ -327,6 +339,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
         },
         required: ["session_id"],
       },
+      annotations: { destructiveHint: true },
     },
     {
       name: "clawtex_get_sessions",
@@ -341,6 +354,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
           },
         },
       },
+      annotations: { readOnlyHint: true },
     },
     {
       name: "clawtex_search",
@@ -360,6 +374,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
         },
         required: ["query"],
       },
+      annotations: { readOnlyHint: true },
     },
   ],
 }));
