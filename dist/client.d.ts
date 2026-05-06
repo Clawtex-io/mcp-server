@@ -5,6 +5,8 @@ export declare class ClawtexClient {
     bootstrap(): Promise<string>;
     getState(type?: string): Promise<unknown[]>;
     updateState(id: string, type: string, entityData: Record<string, unknown>): Promise<unknown>;
+    deleteState(id: string): Promise<unknown>;
+    deleteEvent(eventId: string): Promise<unknown>;
     getEvents(options?: {
         days?: number;
         entity?: string;

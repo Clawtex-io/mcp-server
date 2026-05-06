@@ -53,6 +53,18 @@ export class ClawtexClient {
             throw new Error(`Update state failed: ${JSON.stringify(data)}`);
         return data;
     }
+    async deleteState(id) {
+        const { data, status } = await this.request(`/state/_/${encodeURIComponent(id)}`, { method: "DELETE" });
+        if (status !== 204 && status !== 200)
+            throw new Error(`Delete state failed: ${JSON.stringify(data)}`);
+        return { deleted: id };
+    }
+    async deleteEvent(eventId) {
+        const { data, status } = await this.request(`/events/${encodeURIComponent(eventId)}`, { method: "DELETE" });
+        if (status !== 200 && status !== 204)
+            throw new Error(`Delete event failed: ${JSON.stringify(data)}`);
+        return { deleted: eventId };
+    }
     // Events
     async getEvents(options) {
         const params = {};

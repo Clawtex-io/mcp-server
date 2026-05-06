@@ -86,327 +86,228 @@ server.setRequestHandler(ReadResourceRequestSchema, async (request) => {
   throw new Error(`Unknown resource: ${uri}`);
 });
 
-// Tool definitions
+// Tool definitions -- synced with connector (src/lib/mcp/tools.ts in clawtex repo)
 server.setRequestHandler(ListToolsRequestSchema, async () => ({
   tools: [
+    // ── Read tools ──────────────────────────────────────────
     {
       name: "clawtex_bootstrap",
       description:
-        "Load full agent context from Clawtex - state, lessons, recent events, and rules. Call this at the start of a session to get full context.",
-      inputSchema: {
-        type: "object" as const,
-        properties: {},
-      },
-      annotations: { readOnlyHint: true },
+        "Returns full agent context from Clawtex: current state entities, active lessons, recent events, and operational rules. Provides a comprehensive snapshot of all tracked memory in one response.",
+      inputSchema: { type: "object" as const, properties: {} },
+      annotations: { title: "Bootstrap Context", readOnlyHint: true },
     },
     {
       name: "clawtex_get_state",
       description:
-        "Read state entities from Clawtex. Returns structured data about clients, projects, repos, and other tracked entities.",
+        "Returns state entities from Clawtex. State entities are structured records tracking clients, projects, repos, goals, people, and other tracked items. Optionally filter by entity type.",
       inputSchema: {
         type: "object" as const,
         properties: {
-          type: {
-            type: "string",
-            description:
-              "Filter by entity type (e.g. 'clients', 'projects', 'repos'). Omit to get all.",
-          },
+          type: { type: "string", description: "Filter by entity type (e.g. 'clients', 'projects'). Omit to get all." },
         },
       },
-      annotations: { readOnlyHint: true },
-    },
-    {
-      name: "clawtex_delete_state",
-      description:
-        "Delete a state entity from Clawtex. Use this to remove outdated or incorrect entities.",
-      inputSchema: {
-        type: "object" as const,
-        properties: {
-          id: {
-            type: "string",
-            description: "Entity ID to delete (e.g. 'acme-corp')",
-          },
-        },
-        required: ["id"],
-      },
-      annotations: { destructiveHint: true },
-    },
-    {
-      name: "clawtex_delete_event",
-      description:
-        "Delete an event from Clawtex by its ID. Use this to remove incorrect or duplicate event entries.",
-      inputSchema: {
-        type: "object" as const,
-        properties: {
-          event_id: {
-            type: "string",
-            description: "The event ID to delete (e.g. 'EVT-20260505-123456-abc')",
-          },
-        },
-        required: ["event_id"],
-      },
-      annotations: { destructiveHint: true },
-    },
-    {
-      name: "clawtex_update_state",
-      description:
-        "Create or update a state entity in Clawtex. Use this when a project status changes, a new client appears, or any tracked entity needs updating.",
-      inputSchema: {
-        type: "object" as const,
-        properties: {
-          id: {
-            type: "string",
-            description:
-              "Entity ID, lowercase hyphenated (e.g. 'acme-corp', 'website-rebuild')",
-          },
-          type: {
-            type: "string",
-            description:
-              "Entity type, plural lowercase (e.g. 'clients', 'projects', 'repos')",
-          },
-          data: {
-            type: "object",
-            description:
-              "Entity data object. Include name/title, status, and any relevant fields.",
-          },
-        },
-        required: ["id", "type", "data"],
-      },
-      annotations: { destructiveHint: true },
-    },
-    {
-      name: "clawtex_log_event",
-      description:
-        "Log a significant event to Clawtex. Use this after completing tasks, making decisions, hitting milestones, or encountering blockers. Log events as they happen, not at session end.",
-      inputSchema: {
-        type: "object" as const,
-        properties: {
-          type: {
-            type: "string",
-            enum: [
-              "decision",
-              "milestone",
-              "blocker",
-              "task",
-              "note",
-              "deploy",
-              "build",
-              "contact",
-            ],
-            description: "Event type",
-          },
-          summary: {
-            type: "string",
-            description: "One sentence summary of what happened",
-          },
-          entity: {
-            type: "string",
-            description:
-              "Related entity reference in type/id format (e.g. 'project/website-rebuild')",
-          },
-          outcome: {
-            type: "string",
-            description: "Outcome or result of the event",
-          },
-        },
-        required: ["type", "summary"],
-      },
-      annotations: { destructiveHint: true },
+      annotations: { title: "Get State", readOnlyHint: true },
     },
     {
       name: "clawtex_get_events",
       description:
-        "Query event history from Clawtex. See what happened in recent sessions.",
+        "Returns event history from Clawtex. Events are timestamped records of decisions, milestones, blockers, tasks, and other significant occurrences. Supports filtering by time range, entity, and event type.",
       inputSchema: {
         type: "object" as const,
         properties: {
-          days: {
-            type: "number",
-            description: "Number of days to look back (default 7)",
-          },
-          entity: {
-            type: "string",
-            description: "Filter by entity reference",
-          },
-          type: {
-            type: "string",
-            description: "Filter by event type",
-          },
-          limit: {
-            type: "number",
-            description: "Max events to return (default 50, max 200)",
-          },
+          days: { type: "number", description: "Number of days to look back (default 7)" },
+          entity: { type: "string", description: "Filter by entity reference (e.g. 'project/my-app')" },
+          type: { type: "string", description: "Filter by event type (e.g. 'decision', 'milestone')" },
+          limit: { type: "number", description: "Max events to return (default 50, max 200)" },
         },
       },
-      annotations: { readOnlyHint: true },
+      annotations: { title: "Get Events", readOnlyHint: true },
     },
     {
       name: "clawtex_get_lessons",
       description:
-        "Get active lessons from Clawtex. These are patterns extracted from event history - corrections and guardrails that should be followed.",
-      inputSchema: {
-        type: "object" as const,
-        properties: {},
-      },
-      annotations: { readOnlyHint: true },
-    },
-    {
-      name: "clawtex_extract_lessons",
-      description:
-        "Trigger AI lesson extraction from recent events. Analyses event history and proposes new lessons based on patterns. Pro/Team tier only.",
-      inputSchema: {
-        type: "object" as const,
-        properties: {},
-      },
-      annotations: { destructiveHint: true },
-    },
-    {
-      name: "clawtex_approve_lesson",
-      description: "Approve a pending lesson so it becomes active and gets injected in future sessions.",
-      inputSchema: {
-        type: "object" as const,
-        properties: {
-          lesson_id: {
-            type: "string",
-            description: "The lesson ID to approve (e.g. 'LSN-abc123')",
-          },
-        },
-        required: ["lesson_id"],
-      },
-      annotations: { destructiveHint: true },
-    },
-    {
-      name: "clawtex_reject_lesson",
-      description: "Reject a pending lesson so it is not used.",
-      inputSchema: {
-        type: "object" as const,
-        properties: {
-          lesson_id: {
-            type: "string",
-            description: "The lesson ID to reject",
-          },
-        },
-        required: ["lesson_id"],
-      },
-      annotations: { destructiveHint: true },
-    },
-    {
-      name: "clawtex_create_lesson",
-      description:
-        "Manually create a lesson. Use this when you or the user identifies a pattern that should be corrected in future sessions.",
-      inputSchema: {
-        type: "object" as const,
-        properties: {
-          context: {
-            type: "string",
-            description: "When this lesson applies (e.g. 'When deploying code changes')",
-          },
-          mistake: {
-            type: "string",
-            description: "What went wrong and why it matters",
-          },
-          correct: {
-            type: "string",
-            description: "Numbered steps to follow instead (e.g. '1. Do X\\n2. Do Y\\n3. Do Z')",
-          },
-        },
-        required: ["context", "mistake", "correct"],
-      },
-      annotations: { destructiveHint: true },
-    },
-    {
-      name: "clawtex_signal_lesson",
-      description:
-        "Signal whether a lesson was relevant and followed in the current session. Tracks lesson effectiveness over time.",
-      inputSchema: {
-        type: "object" as const,
-        properties: {
-          lesson_id: {
-            type: "string",
-            description: "The lesson ID",
-          },
-          relevant: {
-            type: "boolean",
-            description: "Whether the lesson was relevant to the current task",
-          },
-          followed: {
-            type: "boolean",
-            description: "Whether the lesson's correction steps were followed",
-          },
-        },
-        required: ["lesson_id", "relevant", "followed"],
-      },
-      annotations: { destructiveHint: true },
-    },
-    {
-      name: "clawtex_start_session",
-      description:
-        "Start a new tracked session. Call this at the beginning of a work session to group events together.",
-      inputSchema: {
-        type: "object" as const,
-        properties: {
-          metadata: {
-            type: "object",
-            description: "Optional session metadata (e.g. project focus, goals)",
-          },
-        },
-      },
-      annotations: { destructiveHint: true },
-    },
-    {
-      name: "clawtex_end_session",
-      description:
-        "End a tracked session with a summary. Call this at the end of a work session.",
-      inputSchema: {
-        type: "object" as const,
-        properties: {
-          session_id: {
-            type: "string",
-            description: "The session ID to end",
-          },
-          summary: {
-            type: "string",
-            description: "Brief summary of what was accomplished in this session",
-          },
-        },
-        required: ["session_id"],
-      },
-      annotations: { destructiveHint: true },
+        "Returns active lessons from Clawtex. Lessons are patterns extracted from event history, each containing a context (when it applies), a correction (what to do differently), and an enforcement rule.",
+      inputSchema: { type: "object" as const, properties: {} },
+      annotations: { title: "Get Lessons", readOnlyHint: true },
     },
     {
       name: "clawtex_get_sessions",
       description:
-        "Get recent sessions. See what happened in previous work sessions.",
+        "Returns recent tracked sessions from Clawtex. Each session groups related events together with start/end timestamps and a summary of what was accomplished.",
       inputSchema: {
         type: "object" as const,
         properties: {
-          limit: {
-            type: "number",
-            description: "Number of sessions to return (default 10, max 50)",
-          },
+          limit: { type: "number", description: "Number of sessions to return (default 10, max 50)" },
         },
       },
-      annotations: { readOnlyHint: true },
+      annotations: { title: "Get Sessions", readOnlyHint: true },
     },
     {
       name: "clawtex_search",
       description:
-        "Search across all Clawtex memory - events, state, and lessons. Use natural language queries like 'when did we discuss pricing' or 'deployment issues'.",
+        "Searches across all Clawtex memory: events, state entities, and lessons. Accepts natural language or keyword queries and returns matching results grouped by category.",
       inputSchema: {
         type: "object" as const,
         properties: {
-          query: {
-            type: "string",
-            description: "Search query - keywords or natural language",
-          },
-          limit: {
-            type: "number",
-            description: "Max results per category (default 20)",
-          },
+          query: { type: "string", description: "Search query - keywords or natural language" },
+          limit: { type: "number", description: "Max results per category (default 20)" },
         },
         required: ["query"],
       },
-      annotations: { readOnlyHint: true },
+      annotations: { title: "Search Memory", readOnlyHint: true },
+    },
+    // ── Write tools ─────────────────────────────────────────
+    {
+      name: "clawtex_update_state",
+      description:
+        "Creates or updates a state entity in Clawtex via upsert. If the entity ID already exists under the given type, it is updated; otherwise a new entity is created. State entities track structured data like project status, client details, and configuration.",
+      inputSchema: {
+        type: "object" as const,
+        properties: {
+          id: { type: "string", description: "Entity ID, lowercase hyphenated (e.g. 'acme-corp')" },
+          type: { type: "string", description: "Entity type, plural lowercase (e.g. 'clients', 'projects')" },
+          data: { type: "object", description: "Entity data object. Include name/title, status, and any relevant fields." },
+        },
+        required: ["id", "type", "data"],
+      },
+      annotations: { title: "Update State", destructiveHint: true },
+    },
+    {
+      name: "clawtex_log_event",
+      description:
+        "Logs a timestamped event to Clawtex. Events record decisions, milestones, blockers, tasks, deploys, and other significant occurrences. Each event has a type, a one-sentence summary, and an optional entity reference.",
+      inputSchema: {
+        type: "object" as const,
+        properties: {
+          type: {
+            type: "string",
+            enum: ["decision", "milestone", "blocker", "task", "note", "deploy", "build", "contact"],
+            description: "Event type",
+          },
+          summary: { type: "string", description: "One sentence summary of what happened" },
+          entity: { type: "string", description: "Related entity reference in type/id format (e.g. 'project/website-rebuild')" },
+          outcome: { type: "string", description: "Outcome or result of the event" },
+        },
+        required: ["type", "summary"],
+      },
+      annotations: { title: "Log Event", destructiveHint: true },
+    },
+    {
+      name: "clawtex_extract_lessons",
+      description:
+        "Triggers AI-powered lesson extraction from recent event history. Analyses patterns across events and proposes new lessons with context, correction steps, and enforcement rules. Proposed lessons require approval before becoming active. Pro and Team tiers only.",
+      inputSchema: { type: "object" as const, properties: {} },
+      annotations: { title: "Extract Lessons", destructiveHint: true },
+    },
+    {
+      name: "clawtex_create_lesson",
+      description:
+        "Creates a new lesson manually. A lesson consists of a context (when it applies), a description of the mistake or pattern to correct, and numbered correction steps. New lessons are created in pending status and require approval.",
+      inputSchema: {
+        type: "object" as const,
+        properties: {
+          context: { type: "string", description: "When this lesson applies (e.g. 'When deploying code changes')" },
+          mistake: { type: "string", description: "What went wrong and why it matters" },
+          correct: { type: "string", description: "Numbered steps to follow instead" },
+        },
+        required: ["context", "mistake", "correct"],
+      },
+      annotations: { title: "Create Lesson", destructiveHint: true },
+    },
+    {
+      name: "clawtex_approve_lesson",
+      description:
+        "Approves a pending lesson, changing its status to active. Active lessons are included in bootstrap context and returned by get_lessons.",
+      inputSchema: {
+        type: "object" as const,
+        properties: {
+          lesson_id: { type: "string", description: "The lesson ID to approve (e.g. 'LSN-abc123')" },
+        },
+        required: ["lesson_id"],
+      },
+      annotations: { title: "Approve Lesson", destructiveHint: true },
+    },
+    {
+      name: "clawtex_reject_lesson",
+      description:
+        "Rejects a pending lesson, marking it as dismissed. Rejected lessons are excluded from bootstrap context and get_lessons results.",
+      inputSchema: {
+        type: "object" as const,
+        properties: {
+          lesson_id: { type: "string", description: "The lesson ID to reject" },
+        },
+        required: ["lesson_id"],
+      },
+      annotations: { title: "Reject Lesson", destructiveHint: true },
+    },
+    {
+      name: "clawtex_signal_lesson",
+      description:
+        "Records whether a lesson was relevant and followed during the current session. Signals are used to track lesson effectiveness over time, surfacing which lessons are consistently useful and which are stale.",
+      inputSchema: {
+        type: "object" as const,
+        properties: {
+          lesson_id: { type: "string", description: "The lesson ID" },
+          relevant: { type: "boolean", description: "Whether the lesson was relevant to the current task" },
+          followed: { type: "boolean", description: "Whether the lesson's correction steps were followed" },
+        },
+        required: ["lesson_id", "relevant", "followed"],
+      },
+      annotations: { title: "Signal Lesson", destructiveHint: true },
+    },
+    {
+      name: "clawtex_start_session",
+      description:
+        "Creates a new tracked session. Sessions group related events together under a single ID with start/end timestamps and optional metadata about the session's focus.",
+      inputSchema: {
+        type: "object" as const,
+        properties: {
+          metadata: { type: "object", description: "Optional session metadata (e.g. project focus, goals)" },
+        },
+      },
+      annotations: { title: "Start Session", destructiveHint: true },
+    },
+    {
+      name: "clawtex_end_session",
+      description:
+        "Ends a tracked session by setting its end timestamp and recording a summary of what was accomplished. The session ID must reference an active (not yet ended) session.",
+      inputSchema: {
+        type: "object" as const,
+        properties: {
+          session_id: { type: "string", description: "The session ID to end" },
+          summary: { type: "string", description: "Brief summary of what was accomplished in this session" },
+        },
+        required: ["session_id"],
+      },
+      annotations: { title: "End Session", destructiveHint: true },
+    },
+    // ── Delete tools ────────────────────────────────────────
+    {
+      name: "clawtex_delete_state",
+      description:
+        "Deletes a state entity from Clawtex by its ID. The entity and all its data are permanently removed.",
+      inputSchema: {
+        type: "object" as const,
+        properties: {
+          id: { type: "string", description: "Entity ID to delete (e.g. 'acme-corp')" },
+        },
+        required: ["id"],
+      },
+      annotations: { title: "Delete State Entity", destructiveHint: true },
+    },
+    {
+      name: "clawtex_delete_event",
+      description:
+        "Deletes an event from Clawtex by its ID. The event record is permanently removed from the timeline.",
+      inputSchema: {
+        type: "object" as const,
+        properties: {
+          event_id: { type: "string", description: "The event ID to delete (e.g. 'EVT-20260505-123456-abc')" },
+        },
+        required: ["event_id"],
+      },
+      annotations: { title: "Delete Event", destructiveHint: true },
     },
   ],
 }));
