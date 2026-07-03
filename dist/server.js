@@ -22,7 +22,7 @@ if (!apiKey) {
     process.exit(1);
 }
 const client = new ClawtexClient(apiKey);
-const server = new Server({ name: "clawtex", version: "0.1.0" }, { capabilities: { tools: {}, resources: {} } });
+const server = new Server({ name: "clawtex", version: "0.1.3" }, { capabilities: { tools: {}, resources: {} } });
 // Resources - auto-loaded into context
 server.setRequestHandler(ListResourcesRequestSchema, async () => ({
     resources: [

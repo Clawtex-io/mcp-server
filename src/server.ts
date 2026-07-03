@@ -32,7 +32,7 @@ if (!apiKey) {
 const client = new ClawtexClient(apiKey);
 
 const server = new Server(
-  { name: "clawtex", version: "0.1.0" },
+  { name: "clawtex", version: "0.1.3" },
   { capabilities: { tools: {}, resources: {} } }
 );
 
