@@ -4,7 +4,7 @@
   "description": "Clawtex MCP server - structured memory for AI agents",
   "type": "module",
   "bin": {
-    "mcp-server": "./dist/server.js"
+    "mcp-server": "dist/server.js"
   },
   "main": "./dist/server.js",
   "files": [
@@ -25,7 +25,7 @@
   "license": "BSL-1.1",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Clawtex-io/mcp-server"
+    "url": "git+https://github.com/Clawtex-io/mcp-server.git"
   },
   "homepage": "https://clawtex.io",
   "keywords": [
