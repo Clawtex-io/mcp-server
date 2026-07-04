@@ -4,11 +4,23 @@ Structured memory for AI agents. Gives your agent persistent state, event histor
 
 ## Setup
 
-### 1. Get an API key
+### The one-command way (recommended)
+
+```sh
+npx -y @clawtex/mcp-server login
+```
+
+Your browser opens on clawtex.io — sign in (or create a free account), approve the code shown in your terminal, and the command receives your API key and wires Claude Code automatically. Nothing to copy, no files to edit. Restart Claude Code and you're done.
+
+For tools embedding this flow: `login --json` prints a single JSON line (`{"api_key":"tkr_…"}` or `{"error":"…"}`) and skips the Claude wiring so the caller can do its own.
+
+### Manual setup
+
+#### 1. Get an API key
 
 Sign up at [clawtex.io](https://clawtex.io/signup) and create an agent. Your API key starts with `tkr_`.
 
-### 2. Add to your Claude config
+#### 2. Add to your Claude config
 
 **Claude Code**, edit `~/.claude/settings.json`:
 ```json

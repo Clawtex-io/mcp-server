@@ -13,14 +13,16 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/server.js",
-    "dev": "tsc && node dist/server.js"
+    "dev": "tsc && node dist/server.js",
+    "test": "vitest run"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.12.1"
   },
   "devDependencies": {
+    "@types/node": "^22.0.0",
     "typescript": "^5.9.0",
-    "@types/node": "^22.0.0"
+    "vitest": "^4.1.9"
   },
   "license": "BSL-1.1",
   "repository": {
