@@ -48,9 +48,9 @@ describe("runLogin", () => {
     expect(code).toBe(0);
     expect(calls.opened[0]).toContain("/device?code=ABCD-EFGH");
     expect(calls.ran[0]).toEqual([
-      "claude", "mcp", "add", "-s", "user",
+      "claude", "mcp", "add", "-s", "user", "clawtex",
       "-e", "CLAWTEX_API_KEY=tkr_test123",
-      "clawtex", "--", "npx", "-y", "@clawtex/mcp-server",
+      "--", "npx", "-y", "@clawtex/mcp-server",
     ]);
   });
 

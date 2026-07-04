@@ -47,7 +47,7 @@ export function defaultDeps(): LoginDeps {
 const MANUAL_SNIPPET = (key: string) => `
 Add this to your Claude Code config manually:
 
-  claude mcp add -s user -e CLAWTEX_API_KEY=${key} clawtex -- npx -y @clawtex/mcp-server
+  claude mcp add -s user clawtex -e CLAWTEX_API_KEY=${key} -- npx -y @clawtex/mcp-server
 
 or in the JSON config:
 
@@ -122,9 +122,9 @@ export async function runLogin(json: boolean, deps: LoginDeps): Promise<number> 
   deps.log("  Approved ✓");
   deps.log("  Connecting Claude Code…");
   const result = await deps.runCommand("claude", [
-    "mcp", "add", "-s", "user",
+    "mcp", "add", "-s", "user", "clawtex",
     "-e", `CLAWTEX_API_KEY=${apiKey}`,
-    "clawtex", "--", "npx", "-y", "@clawtex/mcp-server",
+    "--", "npx", "-y", "@clawtex/mcp-server",
   ]);
 
   if (result.code === 0) {
