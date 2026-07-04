@@ -3,9 +3,15 @@ import { Server } from "@modelcontextprotocol/sdk/server/index.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
 import { CallToolRequestSchema, ListToolsRequestSchema, ListResourcesRequestSchema, ReadResourceRequestSchema, } from "@modelcontextprotocol/sdk/types.js";
 import { ClawtexClient } from "./client.js";
+if (process.argv[2] === "login") {
+    const { runLogin, defaultDeps } = await import("./login.js");
+    process.exit(await runLogin(process.argv.includes("--json"), defaultDeps()));
+}
 const apiKey = process.env.CLAWTEX_API_KEY;
 if (!apiKey) {
     console.error("\nCLAWTEX_API_KEY is required.\n");
+    console.error("Easiest fix — run:  npx -y @clawtex/mcp-server login\n");
+    console.error("Or manually:");
     console.error("1. Sign up at https://clawtex.io/signup");
     console.error("2. Create an agent and copy your API key");
     console.error("3. Add to your Claude config:\n");
