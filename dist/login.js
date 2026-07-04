@@ -109,7 +109,7 @@ export async function runLogin(json, deps) {
     ]);
     if (result.code === 0) {
         deps.log("");
-        deps.log("  Done — Clawtex memory is connected. Restart Claude Code to pick it up.");
+        deps.log("  Done. Clawtex memory is connected. Restart Claude Code to pick it up.");
         return 0;
     }
     // claude missing or the add failed — never lose the key the user just earned

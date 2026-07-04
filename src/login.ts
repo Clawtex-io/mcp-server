@@ -129,7 +129,7 @@ export async function runLogin(json: boolean, deps: LoginDeps): Promise<number> 
 
   if (result.code === 0) {
     deps.log("");
-    deps.log("  Done — Clawtex memory is connected. Restart Claude Code to pick it up.");
+    deps.log("  Done. Clawtex memory is connected. Restart Claude Code to pick it up.");
     return 0;
   }
 

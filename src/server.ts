@@ -18,7 +18,7 @@ if (process.argv[2] === "login") {
 const apiKey = process.env.CLAWTEX_API_KEY;
 if (!apiKey) {
   console.error("\nCLAWTEX_API_KEY is required.\n");
-  console.error("Easiest fix — run:  npx -y @clawtex/mcp-server login\n");
+  console.error("Easiest fix, run:  npx -y @clawtex/mcp-server login\n");
   console.error("Or manually:");
   console.error("1. Sign up at https://clawtex.io/signup");
   console.error("2. Create an agent and copy your API key");

@@ -10,7 +10,7 @@ Structured memory for AI agents. Gives your agent persistent state, event histor
 npx -y @clawtex/mcp-server login
 ```
 
-Your browser opens on clawtex.io — sign in (or create a free account), approve the code shown in your terminal, and the command receives your API key and wires Claude Code automatically. Nothing to copy, no files to edit. Restart Claude Code and you're done.
+Your browser opens on clawtex.io. Sign in (or create a free account), approve the code shown in your terminal, and the command receives your API key and wires Claude Code automatically. Nothing to copy, no files to edit. Restart Claude Code and you're done.
 
 For tools embedding this flow: `login --json` prints a single JSON line (`{"api_key":"tkr_…"}` or `{"error":"…"}`) and skips the Claude wiring so the caller can do its own.
 
